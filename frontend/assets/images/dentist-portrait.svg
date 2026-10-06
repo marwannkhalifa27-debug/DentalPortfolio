@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Portrait placeholder for the dentist">
+  <rect width="800" height="1000" fill="#DCEBED"/>
+  <path d="M120 1000c0-190 120-300 280-300s280 110 280 300z" fill="#FFFFFF"/>
+  <path d="M330 705l70 150 70-150c-22-10-46-16-70-16s-48 6-70 16z" fill="#0E2233"/>
+  <path d="M332 700l68 66-24 70-70-110z M468 700l-68 66 24 70 70-110z" fill="#E9F1F2"/>
+  <rect x="360" y="580" width="80" height="120" rx="30" fill="#D9A98C"/>
+  <ellipse cx="400" cy="470" rx="112" ry="140" fill="#E3B597"/>
+  <path d="M288 440c-6-96 52-156 120-156 76 0 118 62 104 156-14-44-44-72-104-76-50-3-96 20-120 76z" fill="#1B2A38"/>
+  <circle cx="360" cy="480" r="7" fill="#1B2A38"/><circle cx="440" cy="480" r="7" fill="#1B2A38"/>
+  <path d="M362 548c24 20 52 20 76 0" fill="none" stroke="#9E3F4E" stroke-width="7" stroke-linecap="round"/>
+</svg>
