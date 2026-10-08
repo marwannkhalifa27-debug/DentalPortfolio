@@ -30,7 +30,7 @@ loadInto(root, {
     <p style="text-align:center"><a class="text-link" href="cases.html">${icon("back", 18)}Back to cases</a></p></div>`,
   render: ({ c, cats }) => {
     const names = new Map(cats.map((x) => [x.slug, x.name]));
-    document.title = `${c.title} | Dr. Sinan`;
+    document.title = `${c.title} | Dr. Karim`;
     queueMicrotask(async () => {
       initBeforeAfter(qs("#case-root .ba"));
       initImageGallery(root, c.additionalImages);

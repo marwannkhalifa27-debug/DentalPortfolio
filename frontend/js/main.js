@@ -19,7 +19,7 @@ export async function initLayout(page) {
   mount(header, navbar({ name: d.name, page }));
   initNavbar(header);
   mount(qs("#site-footer"), footer(d));
-  if (dentist && dentist.name) document.title = document.title.replace("Dr. Sinan", dentist.name);
+  if (dentist && dentist.name) document.title = document.title.replace("Dr. Karim", dentist.name);
   return dentist;
 }
 
