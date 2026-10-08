@@ -1,17 +1,16 @@
 // Shape returned by GET /dentist.
 // PLACEHOLDER CONTENT: replace every value below with the dentist's real details.
 export const dentistMock = {
-  name: "Dr. Sinan",
+  name: "Dr. Karim",
   title: "Dentist specializing in cosmetic and restorative care",
   intro: "Natural-looking results, explained clearly and done carefully. Browse real cases to see the work before you book.",
   biography: [
     "I am a dentist focused on restoring function and creating smiles that look natural for the person wearing them. Every treatment starts with listening to what you want, then a clear plan with options and honest expectations.",
     "I use modern materials and conservative techniques that protect as much healthy tooth as possible. I document each case with before and after photos so you can see exactly what is achievable.",
   ],
-  university: "Faculty of Dentistry",
-  graduationYear: 2016,
+  university: "Faculty of Dentistry, University of Sphinx",
+  graduationYear: 2026,
   specialization: ["Cosmetic dentistry", "Restorative dentistry", "Teeth whitening", "Veneers and crowns"],
-  experience: 8,
   interests: "Smile design and minimally invasive dentistry",
   highlights: [
     { title: "Years of hands-on experience", text: "Hundreds of treatments across cosmetic and restorative cases, from a single crown to a full smile makeover." },

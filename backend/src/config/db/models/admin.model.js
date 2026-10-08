@@ -2,6 +2,19 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt"
 
 const adminSchema = new mongoose.Schema({
+    fullName: {
+        type: String,
+        required: true,
+        min: 5,
+        max: 20
+    },
+    username: {
+        type: String,
+        min: 8,
+        max: 20,
+        trim: true,
+        lowercase: true
+    },
     email: {
         type: String,
         required: true,
@@ -11,7 +24,24 @@ const adminSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false
+    },
+    phone: {
+        type: Number,
+        required: true,
+        unique: true,
+        trim: true
+    },
+    age: {
+        type: Number,
+        required: true,
+        min: 20,
+        max:60
+    },
+    gender: {
+        type: String,
+        enum: ["male", "female"]
     }
 },
 { 
@@ -19,12 +49,12 @@ const adminSchema = new mongoose.Schema({
 })
 
 adminSchema.pre("save", async function() {
-    if(this.isModified("password")) return 
+    if(!this.isModified("password")) return 
     this.password = await bcrypt.hash(password, 10)
 })
 
 adminSchema.post("save", function(doc) {
-    console.log(`New user created: ${doc.username}`)
+    console.log(`New user created: ${doc.email}`)
 })
 
 export const adminModel = mongoose.model("admin", adminSchema)
