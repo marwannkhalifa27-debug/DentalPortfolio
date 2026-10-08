@@ -3,18 +3,18 @@ import bcrypt from "bcrypt"
 import { generateToken } from "../../utils/token.utils.js"
 
 const finduserbyemail = async (email) => {
-    return await adminModel.find({email}).select("+password")
+    return await adminModel.findOne({email}).select("+password")
 }
 
 export const register = async (req,res,next) => {
     try {
         const {fullName , username, email, password, phone, age, gender} = req.body
-        const user = await finduserbyemail(email)
-        if(user){
-            return res.status(409).json({message: "This email is already registered"})
+        const exists = await finduserbyemail(email)
+        if(exists){
+            return res.status(401).json({message: "This email is already registered"})
         }
 
-        await adminModel.create({fullName , username, email, password, phone, age, gender})
+        const user = await adminModel.create({fullName , username, email, password, phone, age, gender})
 
         const token = generateToken(user)
         return res.status(201).json(
@@ -34,7 +34,7 @@ export const login = async (req,res,next) => {
         const { email , password } = req.body
         const user = await finduserbyemail(email)
         if(!user || !await bcrypt.compare(password, user.password)){
-            return res.status(409).json({message: "This email isn't registered before"})
+            return res.status(401).json({message: "This email isn't registered before"})
         }
 
         const token = generateToken(user)

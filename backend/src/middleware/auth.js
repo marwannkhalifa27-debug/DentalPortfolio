@@ -4,11 +4,11 @@ import { verifyToken } from "../utils/token.utils.js"
 export const authenticate = (req,res,next) => {
     try {
         const authHeader = req.headers.authorization
-        if(!authHeader || !authHeader.startWith("Bearer ")){
-            return res.status(404).json({message: "Authorization header missing or improperly formatted"})
+        if(!authHeader || !authHeader.startsWith("Bearer ")){
+            return res.status(401).json({message: "Authorization header missing or improperly formatted"})
         }
 
-        const token = authHeader.split(" ")
+        const token = authHeader.split(" ")[1]
         if(!token){
             return res.status(404).json({message: "No token provided"})
         }

@@ -8,7 +8,8 @@ const categorySchema = new mongoose.Schema({
     }
 },
 {
-    timestamps: true
+    timestamps: true,
+    toJSON: { virtuals: true, versionKey: false, transform: (_, ret) => { delete ret._id; return ret } },
 })
 
 export const categoryModel = mongoose.model("category", categorySchema)

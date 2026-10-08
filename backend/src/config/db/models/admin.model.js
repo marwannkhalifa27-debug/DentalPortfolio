@@ -25,10 +25,11 @@ const adminSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        select: false
+        select: false,
+        max: 72
     },
     phone: {
-        type: Number,
+        type: String,
         required: true,
         unique: true,
         trim: true
@@ -36,7 +37,7 @@ const adminSchema = new mongoose.Schema({
     age: {
         type: Number,
         required: true,
-        min: 20,
+        min: 18,
         max:60
     },
     gender: {
