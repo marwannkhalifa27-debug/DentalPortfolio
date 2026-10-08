@@ -6,6 +6,8 @@ import authRouter from "./modules/auth/auth.controller.js"
 export const bootstrap = async () => {
     await dbConnection()
     const app = express()
+    app.use(express.json())
+    app.use(cors)
 
     app.use("/auth", authRouter)
     app.get("/", (req,res,next) => {

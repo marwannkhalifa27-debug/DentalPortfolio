@@ -10,7 +10,7 @@ export const dentistMock = {
   ],
   university: "Faculty of Dentistry, University of Sphinx",
   graduationYear: 2026,
-  specialization: ["Cosmetic dentistry", "Restorative dentistry", "Teeth whitening", "Veneers and crowns"],
+  specialization: ["Operative", "Fixed", "Scaling", "Surgery"],
   interests: "Smile design and minimally invasive dentistry",
   highlights: [
     { title: "Years of hands-on experience", text: "Hundreds of treatments across cosmetic and restorative cases, from a single crown to a full smile makeover." },
