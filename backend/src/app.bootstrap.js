@@ -7,6 +7,7 @@ import cors from "cors"
 import helmet from "helmet"
 import rateLimit from "express-rate-limit"
 import path from "path"
+import caseRouter from "./modules/case/case.controller.js"
 
 export const bootstrap = async () => {
     await dbConnection()
@@ -23,6 +24,7 @@ export const bootstrap = async () => {
 
     app.use("/api/auth", authRouter)
     app.use("/api/categories", categoryRouter)
+    app.use("/api/cases", caseRouter)
     app.use(express.static(path.join(import.meta.dirname, "../../frontend"))) // Node 20.11+
     app.use((req, res) => res.status(404).json({ message: "Not found" }))
     app.use((err, req, res, next) => {
