@@ -6,29 +6,6 @@ const finduserbyemail = async (email) => {
     return await adminModel.findOne({email}).select("+password")
 }
 
-export const register = async (req,res,next) => {
-    try {
-        const {fullName , username, email, password, phone, age, gender} = req.body
-        const exists = await finduserbyemail(email)
-        if(exists){
-            return res.status(401).json({message: "This email is already registered"})
-        }
-
-        const user = await adminModel.create({fullName , username, email, password, phone, age, gender})
-
-        const token = generateToken(user)
-        return res.status(201).json(
-            {
-                message: "Registered successfully",
-                email,
-                token
-            }
-        )
-    } catch (error) {
-        return res.status(500).json({message: error.message})
-    }
-}
-
 export const login = async (req,res,next) => {
     try {
         const { email , password } = req.body

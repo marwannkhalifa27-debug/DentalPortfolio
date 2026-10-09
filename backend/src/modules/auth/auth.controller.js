@@ -6,7 +6,6 @@ import { loginSchema, registerSchema } from "./auth.validation.js";
 
 const authRouter = Router()
 
-authRouter.post("/register",validate(registerSchema), register)
 authRouter.post("/login",validate(loginSchema), login)
 
 export default authRouter

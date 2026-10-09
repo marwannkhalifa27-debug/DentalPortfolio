@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch backend/src/index.js",
-    "start": "node backend/src/index.js"
+    "start": "node backend/src/index.js",
+    "create-admin": "node backend/src/scripts/create-admin.js"
   },
   "keywords": [],
   "author": "",

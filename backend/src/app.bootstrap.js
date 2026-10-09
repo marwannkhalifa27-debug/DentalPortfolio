@@ -6,12 +6,20 @@ import categoryRouter from "./modules/category/category.controller.js"
 import cors from "cors"
 import helmet from "helmet"
 import rateLimit from "express-rate-limit"
+import path from "path"
 
 export const bootstrap = async () => {
     await dbConnection()
     const app = express()
+
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // limit each IP to 100 requests per windowMs
+        standardHeaders: true,
+        legacyHeaders: false,
+    });
     app.use(express.json())
-    app.use(cors(), helmet(), rateLimit())
+    app.use(cors(), helmet(), limiter)
 
     app.use("/api/auth", authRouter)
     app.use("/api/categories", categoryRouter)
