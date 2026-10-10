@@ -5,24 +5,14 @@ import { generateToken } from "../../utils/token.utils.js"
 const finduserbyemail = async (email) => {
     return await adminModel.findOne({email}).select("+password")
 }
+const dummyHash = await bcrypt.hash("not-a-real-password", 10)
 
-export const login = async (req,res,next) => {
-    try {
-        const { email , password } = req.body
-        const user = await finduserbyemail(email)
-        if(!user || !await bcrypt.compare(password, user.password)){
-            return res.status(401).json({message: "This email isn't registered before"})
-        }
-
-        const token = generateToken(user)
-
-        return res.status(200).json({
-            message: "Login successfully",
-            email: user.email,
-            token: token
-        })
-    } catch (error) {
-        return res.status(500).json({message: error.message})
+export const login = async (req, res) => {
+    const { email, password } = req.body
+    const user = await adminModel.findOne({ email }).select("+password")
+    const ok = await bcrypt.compare(password, user ? user.password : dummyHash)
+    if (!user || !ok) {
+        return res.status(401).json({ message: "Invalid email or password" })
     }
-    
+    return res.status(200).json({ message: "Login successfully", email: user.email, token: generateToken(user) })
 }

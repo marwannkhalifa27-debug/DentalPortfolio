@@ -10,5 +10,5 @@ export const generateToken = (user) => {
 }
 
 export const verifyToken = (token) => {
-    return jwt.verify(token, token_secret)
+    return jwt.verify(token, token_secret, { algorithms: ["HS256"] })
 }
