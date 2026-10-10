@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 
 
 export const validate = (schema) => {
@@ -18,3 +19,6 @@ export const validate = (schema) => {
         next()
     }
 }
+
+export const validateId = (req, res, next) =>
+    mongoose.isValidObjectId(req.params.id) ? next() : res.status(404).json({ message: "Not found" })
