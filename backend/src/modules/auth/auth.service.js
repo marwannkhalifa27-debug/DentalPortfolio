@@ -2,9 +2,6 @@ import { adminModel } from "../../config/db/models/admin.model.js"
 import bcrypt from "bcrypt"
 import { generateToken } from "../../utils/token.utils.js"
 
-const finduserbyemail = async (email) => {
-    return await adminModel.findOne({email}).select("+password")
-}
 const dummyHash = await bcrypt.hash("not-a-real-password", 10)
 
 export const login = async (req, res) => {

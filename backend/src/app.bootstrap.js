@@ -8,6 +8,10 @@ import helmet from "helmet"
 import rateLimit from "express-rate-limit"
 import path from "path"
 import caseRouter from "./modules/case/case.controller.js"
+import adminRouter from "./modules/admin/admin.controller.js"
+import { authenticate } from "./middleware/auth.js"
+import dentistRouter from "./modules/dentist/dentist.controller.js"
+import contactRouter from "./modules/contact/contact.controller.js"
 
 export const bootstrap = async () => {
     await dbConnection()
@@ -22,7 +26,10 @@ export const bootstrap = async () => {
     app.use(express.json())
     app.use(cors(), helmet(), limiter)
 
+    app.use("/api/admin", authenticate, adminRouter) // will add admin modules later
     app.use("/api/auth", authRouter)
+    app.use("/api/dentist", dentistRouter)
+    app.use("/api/contact", contactRouter)
     app.use("/api/categories", categoryRouter)
     app.use("/api/cases", caseRouter)
     app.use(express.static(path.join(import.meta.dirname, "../../frontend"))) // Node 20.11+

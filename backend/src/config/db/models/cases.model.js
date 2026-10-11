@@ -18,4 +18,9 @@ const caseSchema = new mongoose.Schema({
   toJSON: { virtuals: true, versionKey: false, transform: (_, ret) => { delete ret._id; return ret } },
 })
 
+caseSchema.pre("validate", async function () {
+  if (this.isPublished && !this.patientConsent)
+    this.invalidate("isPublished", "Cannot publish without patient consent")
+})
+
 export const caseModel = mongoose.model("case", caseSchema)
