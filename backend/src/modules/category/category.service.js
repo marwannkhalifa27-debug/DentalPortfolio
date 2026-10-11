@@ -18,6 +18,7 @@ export const addCategory = async (req,res,next) => {
 
 export const updateCategory = async (req,res,next) => {
     const category = await categoryModel.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+    if(!category) return res.status(404).json({message: "Category not found"})
     return res.status(200).json({ 
             message: "Category updated successfully",
             category
