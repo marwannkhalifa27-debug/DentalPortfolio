@@ -5,8 +5,8 @@ import { adminModel } from "../config/db/models/admin.model.js"
 
 
 const [ email, password ] = process.argv.slice(2)
-if(!email || !password || password.length < 8){
-    console.log("Usage: npm run create-admin -- <email> <password (8+ chars)>")
+if(!email || !password || password.length < 12){
+    console.log("Usage: npm run create-admin -- <email> <password (12+ chars)>")
     process.exit(1)
 }
 
