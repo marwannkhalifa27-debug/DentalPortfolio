@@ -9,34 +9,48 @@ import rateLimit from "express-rate-limit"
 import path from "path"
 import caseRouter from "./modules/case/case.controller.js"
 import adminRouter from "./modules/admin/admin.controller.js"
-import { authenticate } from "./middleware/auth.js"
+import { authenticate, requireCsrfHeader } from "./middleware/auth.js"
 import dentistRouter from "./modules/dentist/dentist.controller.js"
 import contactRouter from "./modules/contact/contact.controller.js"
+import cookieParser from "cookie-parser"
+import { apiLimiter, loginLimiter } from "./middleware/rateLimit.js"
 
 export const bootstrap = async () => {
     await dbConnection()
     const app = express()
+    if (process.env.NODE_ENV === "production") app.set("trust proxy", 1)
 
-    const limiter = rateLimit({
-        windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 100, // limit each IP to 100 requests per windowMs
-        standardHeaders: true,
-        legacyHeaders: false,
-    });
-    app.use(express.json())
-    app.use(cors(), helmet(), limiter)
+    app.use(helmet({ contentSecurityPolicy: { directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "frame-src": ["https://www.google.com"],
+        "img-src": ["'self'", "data:", process.env.ASSET_BASE_URL].filter(Boolean),
+    } } }))
+    app.use(express.json({ limit: "10kb"}))
+    app.use(cookieParser)
 
-    app.use("/api/admin", authenticate, adminRouter) // will add admin modules later
+    app.use("/api", apiLimiter)
+    app.use("/api/login", loginLimiter)
+
+    app.use("/api/admin", requireCsrfHeader ,authenticate, adminRouter)
     app.use("/api/auth", authRouter)
     app.use("/api/dentist", dentistRouter)
     app.use("/api/contact", contactRouter)
     app.use("/api/categories", categoryRouter)
     app.use("/api/cases", caseRouter)
+    app.use("/api", (req, res) => res.status(404).json({ message: "Not found" }))
+
     app.use(express.static(path.join(import.meta.dirname, "../../frontend"))) // Node 20.11+
     app.use((req, res) => res.status(404).json({ message: "Not found" }))
+
     app.use((err, req, res, next) => {
+        if (err.type === "entity.parse.failed") return res.status(400).json({ message: "Invalid JSON" })
+        if (err.type === "entity.too.large") return res.status(413).json({ message: "Request too large" })
+        if (err.name === "MulterError") return res.status(err.code === "LIMIT_FILE_SIZE" ? 413 : 400).json({ message: "Upload rejected" })
+        if (err.code === 11000) return res.status(409).json({ message: "Already exists" })
+        if (err.name === "CastError" || err.name === "ValidationError") return res.status(400).json({ message: "Invalid data" })
         console.error(err)
-        res.status(err.status ?? 500).json({ message: err.status ? err.message : "Server error" })
+        const known = err.status && err.status < 500
+        res.status(known ? err.status : 500).json({ message: known ? err.message : "Server error" })
     })
 
     app.listen(port, () => console.log(`Server is running on port ${port}`))

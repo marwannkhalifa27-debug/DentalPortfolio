@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { casesMock } from "../../../frontend/js/data/cases.js";
 import { categoriesMock } from "../../../frontend/js/data/categories.js";
 import { dentistMock } from "../../../frontend/js/data/dentist.js";
@@ -9,7 +10,7 @@ import { dentistModel } from "../config/db/models/dentistProfile.model.js";
 await dbConnection()
 
 for(const c of categoriesMock){
-    await categoryModel.updateOne({ slug: c.clug }, { $set: c }, { upsert: true })
+    await categoryModel.updateOne({ slug: c.slug }, { $set: c }, { upsert: true })
 }
 
 await dentistModel.updateOne({ singleton: "main" }, { $set: dentistMock }, { upsert: true })
@@ -17,7 +18,7 @@ await dentistModel.updateOne({ singleton: "main" }, { $set: dentistMock }, { ups
 if (!(await caseModel.exists({}))) {
     const ids = new Map((await categoryModel.find()).map((c) => [c.slug, c._id]))
     for (const { id, createdAt, category, ...rest } of casesMock) {
-        await caseModel.create({ ...rest, category: ids.get(category), isPublished: true, patientConsent: true })
+        await caseModel.create({ ...rest,createdAt: new Date(createdAt), category: ids.get(category), isPublished: true, patientConsent: true })
     }
 }
 console.log("Seeded")

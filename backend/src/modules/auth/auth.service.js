@@ -1,6 +1,7 @@
 import { adminModel } from "../../config/db/models/admin.model.js"
 import bcrypt from "bcrypt"
 import { generateToken } from "../../utils/token.utils.js"
+import { cookieOptions, sessionMaxAge } from "../../utils/cookie.utils.js"
 
 const dummyHash = await bcrypt.hash("not-a-real-password", 10)
 
@@ -11,14 +12,13 @@ export const login = async (req, res, next) => {
     if (!user || !ok) {
         return res.status(401).json({ message: "Invalid email or password" })
     }
-    return res.status(200).json({ message: "Login successfully", email: user.email, token: generateToken(user) })
+    res.cookie("token", generateToken(user), { ...cookieOptions, maxAge: sessionMaxAge})
+    return res.status(200).json({ message: "Login successfully" , email: user.email})
+}
+export const getInfo = async (req, res) => {
+    const admin = await adminModel.findById(req.user.id)
+    if (!admin) return res.status(401).json({ message: "Authentication required" })
+    res.status(200).json({ email: admin.email, fullName: admin.fullName })
 }
 
-export const getInfo = async (req,res,next) =>{
-    const result = await adminModel.findOne()
-    return res.status(200).json(result)
-}
-
-export const logout = async (req,res,next) => {
-    
-}
+export const logout = (req, res) => { res.clearCookie("token", cookieOptions); res.status(204).end() }

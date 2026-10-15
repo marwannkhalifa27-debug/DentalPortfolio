@@ -19,3 +19,8 @@ export const authenticate = (req,res,next) => {
         return res.status(401).json({ message: "Invalid or expired token" })
     }
 }
+
+export const requireCsrfHeader = (req,res,next) => {
+    ["GET", "HEAD", "OPTIONS"].includes(req.method) || req.get("X-Requested-With") === "fetch"
+        ? next() : res.status(403).json({ message: "Forbidden" })
+}
