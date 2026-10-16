@@ -10,3 +10,5 @@ export const dbConnection = async () => {
         process.exit(1)
     }
 }
+
+mongoose.set("sanitizeFilter", true)

@@ -5,7 +5,7 @@
   "main": "backend/src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --env-file=backend/.env backend/src/index.js",
+    "dev": "node --watch backend/src/index.js",
     "start": "node backend/src/index.js",
     "create-admin": "node backend/src/scripts/create-admin.js",
     "seed": "node backend/src/scripts/seed.js"

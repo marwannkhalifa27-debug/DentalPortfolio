@@ -2,12 +2,12 @@ import express from "express"
 import { port } from "./config/env/env.config.js"
 import { dbConnection } from "./config/db/dbConnection.js"
 import authRouter from "./modules/auth/auth.controller.js"
-import categoryRouter from "./modules/category/category.controller.js"
+import {categoryRouter} from "./modules/category/category.controller.js"
 import cors from "cors"
 import helmet from "helmet"
 import rateLimit from "express-rate-limit"
 import path from "path"
-import caseRouter from "./modules/case/case.controller.js"
+import {caseRouter} from "./modules/case/case.controller.js"
 import adminRouter from "./modules/admin/admin.controller.js"
 import { authenticate, requireCsrfHeader } from "./middleware/auth.js"
 import dentistRouter from "./modules/dentist/dentist.controller.js"
@@ -27,11 +27,11 @@ export const bootstrap = async () => {
     } } }))
     app.use(express.json({ limit: "10kb"}))
     app.use(cookieParser())
-    app.use("/uploads", express.static(path.join(import.meta.dirname, "../uploads")));  
+    // app.use("/uploads", express.static(uploadsDir, { index: false, maxAge: "30d", immutable: true }))
     app.use("/api", apiLimiter)
-    app.use("/api/login", loginLimiter)
+    app.use("/api/auth/login", loginLimiter)
 
-    app.use("/api/admin", requireCsrfHeader ,authenticate, adminRouter)
+    app.use("/api/admin", authenticate, requireCsrfHeader, adminRouter)
     app.use("/api/auth", authRouter)
     app.use("/api/dentist", dentistRouter)
     app.use("/api/contact", contactLimiter, contactRouter)

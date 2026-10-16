@@ -4,17 +4,12 @@ import { authenticate } from "../../middleware/auth.js";
 import { validate, validateId } from "../../middleware/validation.js";
 import { categorySchema, updateCategorySchema } from "./category.validation.js";
 
-
-const adminCategoryRouter = Router()
-const categoryRouter = Router()
-
+export const categoryRouter = Router()
 
 categoryRouter.get("/", getCategories)
 
-adminCategoryRouter.use(authenticate)
+export const adminCategoryRouter = Router()
 
 adminCategoryRouter.post("/", validate(categorySchema), addCategory)
 adminCategoryRouter.patch("/:id", validateId, validate(updateCategorySchema), updateCategory)
 adminCategoryRouter.delete("/:id", validateId, deleteCategory)
-
-export default { adminCategoryRouter, categoryRouter }

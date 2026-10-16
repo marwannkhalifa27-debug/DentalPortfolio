@@ -1,8 +1,6 @@
 import { Router } from "express";
-import adminCategoryRouter from "../category/category.controller.js";
-import adminCaseRouter from "../case/case.controller.js";
-
-
+import { adminCategoryRouter } from "../category/category.controller.js";
+import { adminCaseRouter } from "../case/case.controller.js";
 
 const adminRouter = Router()
 

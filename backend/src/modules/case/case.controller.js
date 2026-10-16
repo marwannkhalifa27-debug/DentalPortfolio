@@ -2,21 +2,18 @@ import { Router } from "express";
 import { createCase, deleteCase, getCaseById, getCases, updateCase } from "./case.service.js";
 import { authenticate } from "../../middleware/auth.js";
 import { caseImageUpload } from "../../middleware/upload.js";
+import { validate } from "../../middleware/validation.js";
+import { updateCaseSchema } from "./case.validation.js";
 
 
-const caseRouter = Router()
-const adminCaseRouter = Router()
-
-
+export const caseRouter = Router()
 
 caseRouter.get("/", getCases)
 caseRouter.get("/:id", getCaseById)
 
-adminCaseRouter.use(authenticate)
+
+export const adminCaseRouter = Router()
 
 adminCaseRouter.post("/", caseImageUpload, createCase);
-
-adminCaseRouter.patch("/:id", caseImageUpload, updateCase);
+adminCaseRouter.patch("/:id", caseImageUpload, validate(updateCaseSchema), updateCase);
 adminCaseRouter.delete("/:id", deleteCase);
-
-export default { caseRouter , adminCaseRouter }
