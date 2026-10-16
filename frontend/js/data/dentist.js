@@ -31,13 +31,6 @@ export const dentistMock = {
   ],
   phone: "+20 100 000 0000",
   whatsapp: "+20 100 000 0000",
-  email: "clinic@example.com",
-  address: "Street name, City, Egypt",
-  workingHours: [
-    { days: "Saturday to Thursday", hours: "12:00 pm to 9:00 pm" },
-    { days: "Friday", hours: "Closed" },
-  ],
   socialLinks: { instagram: "https://instagram.com/", facebook: "https://facebook.com/" },
-  mapEmbedUrl: "", // paste a Google Maps "embed" URL here to show the map
   profileImage: "assets/images/dentist-portrait.svg",
 };

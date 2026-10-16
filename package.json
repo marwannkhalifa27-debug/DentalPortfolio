@@ -5,7 +5,7 @@
   "main": "backend/src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch backend/src/index.js",
+    "dev": "node --env-file=backend/.env backend/src/index.js",
     "start": "node backend/src/index.js",
     "create-admin": "node backend/src/scripts/create-admin.js",
     "seed": "node backend/src/scripts/seed.js"
@@ -17,7 +17,7 @@
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
-    "dotenv": "^18.0.5",
+    "dotenv": "^18.0.8",
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.1",
     "helmet": "^8.3.0",

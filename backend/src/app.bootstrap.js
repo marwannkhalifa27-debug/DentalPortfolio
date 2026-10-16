@@ -32,7 +32,6 @@ export const bootstrap = async () => {
     app.use("/api/login", loginLimiter)
 
     app.use("/api/admin", requireCsrfHeader ,authenticate, adminRouter)
-    app.use("/api/admin/cases", adminCaseRouter)
     app.use("/api/auth", authRouter)
     app.use("/api/dentist", dentistRouter)
     app.use("/api/contact", contactLimiter, contactRouter)
