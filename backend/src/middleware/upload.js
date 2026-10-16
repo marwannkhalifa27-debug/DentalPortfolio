@@ -3,21 +3,28 @@ import fs from "fs"
 import path from "path"
 
 
-const uploadDir = path.join(import.meta.dirname, "../../uploads/images");
+export const uploadDir = path.join(import.meta.dirname, "../../uploads/images");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
+const EXT = { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp" }
+
 const storage = multer.diskStorage({
-    destination: (req,file,cb) => {
-        cb(null, path.join(import.meta.dirname, "../../uploads/images"))
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
-    }
+    destination: uploadDir,
+    filename: (req, file, cb) => cb(null, `${crypto.randomUUID()}${EXT[file.mimetype]}`),
 })
 
-export const caseImageUpload = multer({ storage }).fields([
+export const caseImageUpload = multer({
+    storage,
+    limits: { fileSize: 8 * 1024 * 1024, files: 7 },
+    fileFilter: (req, file, cb) =>
+        EXT[file.mimetype]
+            ? cb(null, true)
+            : cb(Object.assign(new Error("Only JPEG, PNG or WebP images are allowed"), { status: 400 })),
+}).fields([
     { name: "beforeImage", maxCount: 1 },
     { name: "afterImage", maxCount: 1 },
     { name: "additionalImages", maxCount: 5 }
 ])
+export const imageUrl = (file) => `/uploads/images/${file.filename}`
+export const removeImages = (urls = []) =>
+    Promise.all(urls.filter(Boolean).map((u) => fs.promises.rm(path.join(uploadDir, path.basename(u)), { force: true })))

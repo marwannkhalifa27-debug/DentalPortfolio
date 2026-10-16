@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-
+import fs from "fs"
 
 export const validate = (schema) => {
     return (req,res,next) => {
@@ -15,6 +15,7 @@ export const validate = (schema) => {
                 }
             )
         }
+        Object.values(req.files ?? {}).flat().forEach((f) => fs.promises.rm(f.path, { force: true }))
         req.body = result.data
         next()
     }
@@ -22,3 +23,4 @@ export const validate = (schema) => {
 
 export const validateId = (req, res, next) =>
     mongoose.isValidObjectId(req.params.id) ? next() : res.status(404).json({ message: "Not found" })
+

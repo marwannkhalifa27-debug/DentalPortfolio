@@ -3,13 +3,25 @@ import { caseModel } from "../../config/db/models/cases.model.js"
 import { categoryModel } from "../../config/db/models/categories.model.js"
 import path from "path"
 import fs from "fs"
+import { imageUrl } from "../../middleware/upload.js"
 
-export const deleteLocalFile = (filePath) =>{
-    if(!filePath) return 
-    const absolutePath = path.resolve(filePath)
-    if(fs.existsSync(absolutePath)){
-        fs.unlinkSync(absolutePath)
-    }
+const bad = (message) => Object.assign(new Error(message), { status: 400})
+const pickFiles = (f = {}) => ({
+    before: f.beforeImage?.[0] && imageUrl(f.beforeImage[0]),
+    after: f.afterImage?.[0] && imageUrl(f.afterImage[0]),
+    extra: (f.additionalImages ?? []).map(imageUrl),
+})
+const assertCategory = async (id) => {
+    if (id && !(await categoryModel.exists({ _id: id}))) throw bad("Category does not exist")
+}
+export const listAllCases = async (req,res) => {
+    res.json(await caseModel.find().populate("category", "name slug").sort({ createdAt: -1}))
+}
+
+export const getAnyCase = async (req,res) => {
+    const found = await caseModel.findById(req.params.id).populate("category", "name slug")
+    if(!found) return res.status(404).json({ message: "Case not found" })
+    res.json(found)
 }
 
 export const getCases = async (req, res) => {
@@ -57,11 +69,32 @@ export const createCase = async (req,res) => {
         data: newCase
     });
 }
+export const updateCase = async (req, res) => {
+    const { before, after, extra } = pickFiles(req.files)
+    const fresh = [before, after, ...extra]
+    try {
+        const doc = await caseModel.findById(req.params.id)
+        if (!doc) { await removeImages(fresh); return res.status(404).json({ message: "Case not found" }) }
+        if (!Object.keys(req.body).length && !fresh.some(Boolean)) throw bad("Nothing to update")
+        await assertCategory(req.body.category)
 
-export const updateCase = async(req,res) => {
-
+        const old = []
+        if (before) { old.push(doc.beforeImage); doc.beforeImage = before }
+        if (after) { old.push(doc.afterImage); doc.afterImage = after }
+        if (extra.length) { old.push(...doc.additionalImages); doc.additionalImages = extra } // replaces the set
+        doc.set(req.body)
+        await doc.save()            // save(), not findByIdAndUpdate, so the consent rule runs
+        await removeImages(old)
+        res.json(doc)
+    } catch (err) {
+        await removeImages(fresh)
+        throw err
+    }
 }
 
-export const deleteCase = async(req,res) => {
-    
+export const deleteCase = async (req, res) => {
+    const doc = await caseModel.findByIdAndDelete(req.params.id)
+    if (!doc) return res.status(404).json({ message: "Case not found" })
+    await removeImages([doc.beforeImage, doc.afterImage, ...doc.additionalImages])
+    res.status(204).end()
 }

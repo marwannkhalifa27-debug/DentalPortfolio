@@ -14,4 +14,4 @@ export const caseSchema = z.strictObject({
     isPublished: z.stringbool().optional(),
     patientConsent: z.stringbool().optional(),
 })
-export const updateCaseSchema = caseSchema.partial().refine((d) => Object.keys(d).length > 0, "Nothing to update")
+export const updateCaseSchema = caseSchema.partial()
