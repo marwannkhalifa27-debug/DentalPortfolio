@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Login | Dr. Karim</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .login-container { max-width: 400px; margin: 10vh auto; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="login-container form-panel">
+    <h2 style="text-align: center; margin-bottom: 1.5rem;">Admin Login</h2>
+    <form class="form" id="loginForm">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" required>
+      </div>
+      <div id="status" role="status" style="display:none;" class="form__status form__status--error"></div>
+      <button class="btn" type="submit" style="width: 100%; margin-top: 1rem;">Log In</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { config } from "./js/config.js";
+    
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("status");
+      const btn = e.target.querySelector("button");
+      
+      btn.disabled = true;
+      btn.textContent = "Verifying...";
+      status.style.display = "none";
+
+      try {
+        const res = await fetch(`${config.API_BASE_URL}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value
+          })
+        });
+
+        if (res.ok) {
+          window.location.href = "dashboard.html";
+        } else {
+          const data = await res.json();
+          throw new Error(data.message || "Invalid credentials");
+        }
+      } catch (err) {
+        status.textContent = err.message;
+        status.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Log In";
+      }
+    });
+  </script>
+</body>
+</html>

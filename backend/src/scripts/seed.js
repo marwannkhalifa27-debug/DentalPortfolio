@@ -6,11 +6,10 @@ import { dbConnection } from "../config/db/dbConnection.js";
 import { caseModel } from "../config/db/models/cases.model.js";
 import { categoryModel } from "../config/db/models/categories.model.js";
 import { dentistModel } from "../config/db/models/dentistProfile.model.js";
-import "dotenv/config"
-
-await dbConnection()
 
 if (process.env.NODE_ENV === "production") { console.error("Refusing to seed in production"); process.exit(1) }
+
+await dbConnection()
 
 for(const c of categoriesMock){
     await categoryModel.updateOne({ slug: c.slug }, { $set: c }, { upsert: true })

@@ -1,9 +1,15 @@
 import { Router } from "express";
-import { getDentistProfile } from "./dentist.service.js";
+import { getDentistProfile, updateDentistProfile } from "./dentist.service.js";
+import { authenticate } from "../../middleware/auth.js";
+import { validate } from "../../middleware/validation.js";
+import { updateDentistSchema } from "./dentist.validation.js";
 
 
-const dentistRouter = Router()
+export const dentistRouter = Router()
 
 dentistRouter.get("/", getDentistProfile)
 
-export default dentistRouter
+export const adminDentistRouter = Router()
+
+adminDentistRouter.patch("/", authenticate, validate(updateDentistSchema), updateDentistProfile)
+

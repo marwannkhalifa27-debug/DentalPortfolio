@@ -10,7 +10,7 @@ import path from "path"
 import {caseRouter} from "./modules/case/case.controller.js"
 import adminRouter from "./modules/admin/admin.controller.js"
 import { authenticate, requireCsrfHeader } from "./middleware/auth.js"
-import dentistRouter from "./modules/dentist/dentist.controller.js"
+import {dentistRouter} from "./modules/dentist/dentist.controller.js"
 import contactRouter from "./modules/contact/contact.controller.js"
 import cookieParser from "cookie-parser"
 import { apiLimiter, contactLimiter, loginLimiter } from "./middleware/rateLimit.js"
@@ -27,7 +27,7 @@ export const bootstrap = async () => {
         "frame-src": ["https://www.google.com"],
         "img-src": ["'self'", "data:", process.env.ASSET_BASE_URL].filter(Boolean),
     } } }))
-    app.use(express.json({ limit: "10kb"}))
+    app.use(express.json({ limit: "100kb"}))
     app.use(logger)
     app.use(cookieParser())
     app.use("/uploads", express.static(uploadDir, { index: false, maxAge: "30d", immutable: true }))   

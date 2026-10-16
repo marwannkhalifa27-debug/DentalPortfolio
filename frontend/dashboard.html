@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard | Dr. Karim</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .dashboard-header { display: flex; justify-content: space-between; align-items: center; padding-block: 1rem; border-bottom: 1px solid var(--line); margin-bottom: 2rem; }
+    .case-list-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--line); border-radius: var(--r-sm); margin-bottom: 0.5rem; background: var(--white); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="dashboard-header">
+      <h2>Dr. Karim Workspace</h2>
+      <button id="logoutBtn" class="btn btn--outline btn--small">Log Out</button>
+    </header>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+      
+      <!-- Upload Form -->
+      <div class="form-panel">
+        <h3 style="margin-bottom: 1rem;">Add New Case</h3>
+        <form class="form" id="newCaseForm">
+          <div class="field">
+            <label for="title">Case Title</label>
+            <input id="title" name="title" type="text" required>
+          </div>
+          <div class="field">
+            <label for="category">Category</label>
+            <select id="category" name="category" required style="padding: 0.75rem; border: 1.5px solid var(--line); border-radius: 12px;"></select>
+          </div>
+          <div class="field">
+            <label for="description">Short Description</label>
+            <textarea id="description" name="description" style="min-height: 80px;" required></textarea>
+          </div>
+          <div class="form__row">
+            <div class="field">
+              <label for="beforeImage">Before Image</label>
+              <input id="beforeImage" name="beforeImage" type="file" accept="image/jpeg, image/png, image/webp" required>
+            </div>
+            <div class="field">
+              <label for="afterImage">After Image</label>
+              <input id="afterImage" name="afterImage" type="file" accept="image/jpeg, image/png, image/webp" required>
+            </div>
+          </div>
+          <div class="field">
+            <label><input type="checkbox" name="isPublished" value="true" checked> Publish immediately</label>
+            <label><input type="checkbox" name="patientConsent" value="true" checked> Patient consent obtained</label>
+          </div>
+          <div id="uploadStatus" role="status" style="display:none;" class="form__status"></div>
+          <button class="btn" type="submit">Upload Case</button>
+        </form>
+      </div>
+
+      <!-- Manage Cases -->
+      <div>
+        <h3 style="margin-bottom: 1rem;">Manage Cases</h3>
+        <div id="casesList">Loading cases...</div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script type="module">
+    import { config } from "./js/config.js";
+
+    // 1. Verify Auth
+    async function checkAuth() {
+      const res = await fetch(`${config.API_BASE_URL}/auth/me`, { credentials: "include" });
+      if (!res.ok) window.location.href = "admin.html";
+    }
+
+    // 2. Load Categories
+    async function loadCategories() {
+      const res = await fetch(`${config.API_BASE_URL}/categories`);
+      const categories = await res.json();
+      const select = document.getElementById("category");
+      categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat._id || cat.id; // Using the ObjectId string
+        opt.textContent = cat.name;
+        select.appendChild(opt);
+      });
+    }
+
+    // 3. Load Cases
+    async function loadCases() {
+      const res = await fetch(`${config.API_BASE_URL}/admin/cases`, {
+        credentials: "include",
+        headers: { "X-Requested-With": "fetch" }
+      });
+      const cases = await res.json();
+      const list = document.getElementById("casesList");
+      list.innerHTML = "";
+      
+      cases.forEach(c => {
+        const item = document.createElement("div");
+        item.className = "case-list-item";
+        item.innerHTML = `
+          <div><strong>${c.title}</strong> <br> <small>${c.category?.name || 'Unknown'}</small></div>
+          <button class="btn btn--outline btn--small delete-btn" data-id="${c._id || c.id}">Delete</button>
+        `;
+        list.appendChild(item);
+      });
+
+      // Attach delete listeners
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          if(!confirm("Are you sure you want to delete this case?")) return;
+          const id = e.target.dataset.id;
+          await fetch(`${config.API_BASE_URL}/admin/cases/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+            headers: { "X-Requested-With": "fetch" }
+          });
+          loadCases();
+        });
+      });
+    }
+
+    // 4. Handle Form Submission
+    document.getElementById("newCaseForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.getElementById("uploadStatus");
+      const btn = e.target.querySelector("button");
+      btn.disabled = true;
+      status.style.display = "none";
+
+      // formData automatically formats the text and file inputs for multer
+      const formData = new FormData(e.target);
+
+      try {
+        const res = await fetch(`${config.API_BASE_URL}/admin/cases`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "X-Requested-With": "fetch" }, // CSRF requirement
+          body: formData
+        });
+
+        if (res.ok) {
+          status.className = "form__status form__status--ok";
+          status.textContent = "Case added successfully!";
+          status.style.display = "block";
+          e.target.reset();
+          loadCases();
+        } else {
+          const data = await res.json();
+          throw new Error(data.message || "Failed to upload case");
+        }
+      } catch (err) {
+        status.className = "form__status form__status--error";
+        status.textContent = err.message;
+        status.style.display = "block";
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await fetch(`${config.API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "X-Requested-With": "fetch" }
+      });
+      window.location.href = "admin.html";
+    });
+
+    // Initialize
+    checkAuth().then(() => {
+      loadCategories();
+      loadCases();
+    });
+  </script>
+</body>
+</html>

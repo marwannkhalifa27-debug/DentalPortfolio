@@ -5,3 +5,20 @@ export const getDentistProfile = async (req, res) => {
     if (!profile) return res.status(404).json({ message: "Profile not found" })
     res.status(200).json(profile)
 }
+
+export const updateDentistProfile = async (req,res) => {
+    const { socialLinks, ...data} = req.body
+    const profile = await dentistModel.findOne({ singleton: "main" })
+
+    if (!profile) {
+        if (!data.name || !data.title)
+            return res.status(400).json({ message: "name and title are required to create the profile" })
+        profile = await dentistModel.create({ ...data, socialLinks })
+        return res.status(201).json(profile)
+    }
+
+    profile.set(data)
+    for (const [k, v] of Object.entries(socialLinks ?? {})) profile.set(`socialLinks.${k}`, v)
+    await profile.save()
+    res.json(profile)
+}
