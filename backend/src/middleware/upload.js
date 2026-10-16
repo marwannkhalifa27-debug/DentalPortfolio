@@ -2,31 +2,21 @@ import multer from "multer"
 import fs from "fs"
 import path from "path"
 
-
-const uploadDir = "uploads/images"
-if(!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir, { recursive: true })
-}
 const storage = multer.diskStorage({
     destination: (req,file,cb) => {
-        cb(null, uploadDir)
+        cb(null, path.join(import.meta.dirname, "../../uploads/images"))
     },
-    filename: (req,file,cb) => {
-        const uniqueName = `${req.user.id}-${Date.now()}${path.extname(file.originalname)}`
-        cb(null, uniqueName)
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
     }
 })
 
-const fileFilter = (req,file,cb) => {
-    const allowedTypes = ["image/png", "image/webp", "image/jpeg"]
-    if(allowedTypes.includes(file.mimetype)){
-        cb(null, true)
-    }
-    else{
-        cb(new Error("Only JPEG, PNG, and WEBP images are allowed"))
-    }
-
-}
+export const caseImageUpload = multer({ storage }).fields([
+    { name: "beforeImage", maxCount: 1 },
+    { name: "afterImage", maxCount: 1 },
+    { name: "additionalImages", maxCount: 5 }
+])
 
 export const upload = multer({
     storage,

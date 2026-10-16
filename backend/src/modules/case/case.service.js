@@ -28,3 +28,22 @@ export const getCaseById = async (req, res) => {
     if (!found) return res.status(404).json({ message: "Case not found" })
     return res.status(200).json(found)
 }
+
+export const createCase = async (req,res) => {
+    const beforeImgPath = req.files?.beforeImage?.[0]?.path;
+    const afterImgPath = req.files?.afterImage?.[0]?.path;
+    
+    const additionalImgPaths = req.files?.additionalImages?.map(file => file.path) || [];
+
+    const newCase = await caseModel.create({
+        ...req.body,
+        beforeImage: beforeImgPath,
+        afterImage: afterImgPath,
+        additionalImages: additionalImgPaths
+    });
+
+    return res.status(201).json({
+        success: true,
+        data: newCase
+    });
+}
