@@ -1,6 +1,16 @@
 import mongoose from "mongoose"
 import { caseModel } from "../../config/db/models/cases.model.js"
 import { categoryModel } from "../../config/db/models/categories.model.js"
+import path from "path"
+import fs from "fs"
+
+export const deleteLocalFile = (filePath) =>{
+    if(!filePath) return 
+    const absolutePath = path.resolve(filePath)
+    if(fs.existsSync(absolutePath)){
+        fs.unlinkSync(absolutePath)
+    }
+}
 
 export const getCases = async (req, res) => {
     const { category, featured, limit } = req.query
@@ -46,4 +56,12 @@ export const createCase = async (req,res) => {
         success: true,
         data: newCase
     });
+}
+
+export const updateCase = async(req,res) => {
+
+}
+
+export const deleteCase = async(req,res) => {
+    
 }
