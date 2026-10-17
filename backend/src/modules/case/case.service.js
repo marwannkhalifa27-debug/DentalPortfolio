@@ -25,20 +25,43 @@ export const getAnyCase = async (req,res) => {
 }
 
 export const getCases = async (req, res) => {
-    const { category, featured, limit } = req.query
+    const { category, featured } = req.query
+
+    const pageNumber = parseInt(req.query.page) || 1
+    const limitNumber = Math.min(parseInt(req.query.limit) || 50, 50)
+
     const filter = { isPublished: true }
     if (featured === "true") filter.featured = true
     if (category) {
         const cat = await categoryModel.findOne({ slug: String(category) })
-        if (!cat) return res.status(200).json([])
+        if (!cat) return res.status(200).json({
+            success: true,
+            data: [],
+            pagination: { totalCases: 0, totalPages: 0, currentPage: pageNumber }
+        })
         filter.category = cat._id
     }
+
+    const totalCases = await caseModel.countDocuments(filter)
+    const totalPages = Math.ceil(totalCases / limitNumber)
+
     const cases = await caseModel.find(filter)
         .select("-patientConsent")
         .populate("category", "name slug")
         .sort({ createdAt: -1 })
-        .limit(Math.min(Number(limit) || 50, 50))
-    return res.status(200).json(cases)
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber)
+    return res.status(200).json({
+        success: true,
+        data: cases,
+        pagination: {
+            totalCases,
+            totalPages,
+            currentPage: pageNumber,
+            hasNextPage: pageNumber < totalPages,
+            hasPrevPage: pageNumber > 1
+        }
+    })
 }
 
 export const getCaseById = async (req, res) => {
