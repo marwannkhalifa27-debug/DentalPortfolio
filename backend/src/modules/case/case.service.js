@@ -1,9 +1,7 @@
 import mongoose from "mongoose"
 import { caseModel } from "../../config/db/models/cases.model.js"
 import { categoryModel } from "../../config/db/models/categories.model.js"
-import path from "path"
-import fs from "fs"
-import { imageUrl } from "../../middleware/upload.js"
+import { imageUrl, removeImages } from "../../middleware/upload.js"
 
 const bad = (message) => Object.assign(new Error(message), { status: 400})
 const pickFiles = (f = {}) => ({
@@ -53,7 +51,7 @@ export const getCases = async (req, res) => {
         .limit(limitNumber)
     return res.status(200).json({
         success: true,
-        data: cases,
+        data: [cases],
         pagination: {
             totalCases,
             totalPages,

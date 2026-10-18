@@ -8,7 +8,7 @@ export const getDentistProfile = async (req, res) => {
 
 export const updateDentistProfile = async (req,res) => {
     const { socialLinks, ...data} = req.body
-    const profile = await dentistModel.findOne({ singleton: "main" })
+    let profile = await dentistModel.findOne({ singleton: "main" })
 
     if (!profile) {
         if (!data.name || !data.title)

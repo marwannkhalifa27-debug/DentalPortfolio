@@ -5,6 +5,9 @@ export const validate = (schema) => {
     return (req,res,next) => {
         const result = schema.safeParse(req.body)
         if(!result.success){
+            Object.values(req.files ?? {})  
+                .flat()
+                .forEach((f) => fs.promises.rm(f.path, { force: true }))
             return res.status(400).json(
                 {
                     message: "Validation failed",
@@ -15,7 +18,6 @@ export const validate = (schema) => {
                 }
             )
         }
-        Object.values(req.files ?? {}).flat().forEach((f) => fs.promises.rm(f.path, { force: true }))
         req.body = result.data
         next()
     }
