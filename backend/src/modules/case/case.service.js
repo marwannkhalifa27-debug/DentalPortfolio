@@ -51,7 +51,7 @@ export const getCases = async (req, res) => {
         .limit(limitNumber)
     return res.status(200).json({
         success: true,
-        data: [cases],
+        data: cases,
         pagination: {
             totalCases,
             totalPages,
