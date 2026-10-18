@@ -50,7 +50,11 @@ export const bootstrap = async () => {
         if (err.type === "entity.too.large") return res.status(413).json({ message: "Request too large" })
         if (err.name === "MulterError") return res.status(err.code === "LIMIT_FILE_SIZE" ? 413 : 400).json({ message: "Upload rejected" })
         if (err.code === 11000) return res.status(409).json({ message: "Already exists" })
-        if (err.name === "CastError" || err.name === "ValidationError") return res.status(400).json({ message: "Invalid data" })
+        if (err.name === "ValidationError") return res.status(400).json({
+            message: "Validation failed",
+            errors: Object.values(err.errors).map((e) => ({ field: e.path, message: e.message })),
+        })
+        if (err.name === "CastError") return res.status(400).json({ message: "Invalid data" })
         console.error(err)
         const known = err.status && err.status < 500
         res.status(known ? err.status : 500).json({ message: known ? err.message : "Server error" })

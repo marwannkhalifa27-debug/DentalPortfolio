@@ -73,22 +73,26 @@ export const getCaseById = async (req, res) => {
 }
 
 export const createCase = async (req,res) => {
-    const beforeImgPath = req.files?.beforeImage?.[0]?.path;
-    const afterImgPath = req.files?.afterImage?.[0]?.path;
+
+    const { before, after, extra } = pickFiles(req.files)
+    const uploaded = [before, after, ...extra]
     
-    const additionalImgPaths = req.files?.additionalImages?.map(file => file.path) || [];
+    try {
+        if(!before || !after) throw bad("Before and after images are required")
 
-    const newCase = await caseModel.create({
-        ...req.body,
-        beforeImage: beforeImgPath,
-        afterImage: afterImgPath,
-        additionalImages: additionalImgPaths
-    });
+        await assertCategory(req.body.category)
+        const doc = await caseModel.create({
+            ...req.body,
+            beforeImage: before,
+            afterImage: after,
+            additionalImages: extra
+        })
 
-    return res.status(201).json({
-        success: true,
-        data: newCase
-    });
+        return res.status(201).json({message: "Case created", case: doc})
+    } catch (error) {
+        await removeImages(uploaded)
+        throw err
+    }
 }
 export const updateCase = async (req, res) => {
     const { before, after, extra } = pickFiles(req.files)

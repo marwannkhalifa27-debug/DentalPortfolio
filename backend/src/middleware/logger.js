@@ -1,6 +1,10 @@
 
 
 export const logger = (req,res,next) => {
-    console.log(`${req.method} ${req.originalUrl} ${new Date(Date.now())}`)
+    console.log(`
+        Method: ${req.method} 
+        URL: ${req.originalUrl} 
+        Requested on: ${new Date(Date.now())}
+        `)
     next()
 }
