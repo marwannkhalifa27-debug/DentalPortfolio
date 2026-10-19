@@ -12,7 +12,7 @@ export const getMessages = async (req,res) => {
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit || 20)))
 
     const [messages, total, unread] = await Promise.all([
-        contactMessageModel.find().sort({ createdAt: true }).skip((page -1) * limit).limit(limit),
+        contactMessageModel.find().sort({ createdAt: -1 }).skip((page -1) * limit).limit(limit),
         contactMessageModel.countDocuments(),
         contactMessageModel.countDocuments({ isRead: false })
     ])

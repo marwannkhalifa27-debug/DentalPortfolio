@@ -11,5 +11,9 @@ const required = (name) => {
 export const db_uri = required("DB_URI")
 export const token_secret = required("TOKEN_SECRET")
 export const port = process.env.PORT ?? 3000
+export const aws_region = process.env.AWS_REGION
+export const aws_profile = process.env.AWS_PROFILE
+export const aws_bucket = process.env.AWS_S3_BUCKET
+
 
 if (token_secret.length < 32) throw new Error("TOKEN_SECRET must be at least 32 characters")

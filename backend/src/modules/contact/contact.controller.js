@@ -10,6 +10,6 @@ contactRouter.post("/", validate(contactSchema), sendMessage)
 
 export const adminContactRouter = Router()
 
-adminContactRouter.get("/", validateId, getMessages)
+adminContactRouter.get("/", getMessages)
 adminContactRouter.patch("/:id", validateId, updateMessageRead)
 adminContactRouter.delete("/:id", validateId, deleteMessage)

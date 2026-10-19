@@ -11,5 +11,5 @@ dentistRouter.get("/", getDentistProfile)
 
 export const adminDentistRouter = Router()
 
-adminDentistRouter.patch("/", authenticate, validate(updateDentistSchema), updateDentistProfile)
+adminDentistRouter.patch("/", validate(updateDentistSchema), updateDentistProfile)
 

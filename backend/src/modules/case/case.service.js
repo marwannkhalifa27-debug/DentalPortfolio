@@ -91,7 +91,7 @@ export const createCase = async (req,res) => {
         return res.status(201).json({message: "Case created", case: doc})
     } catch (error) {
         await removeImages(uploaded)
-        throw err
+        return res.status(500).json({message: error.message })
     }
 }
 export const updateCase = async (req, res) => {

@@ -1,7 +1,7 @@
 import multer from "multer"
 import fs from "fs"
 import path from "path"
-
+import crypto from "crypto"
 
 export const uploadDir = path.join(import.meta.dirname, "../../uploads/images");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
