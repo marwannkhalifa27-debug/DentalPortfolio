@@ -92,8 +92,6 @@ export const updateCase = async (req, res) => {
     if(!doc) return res.status(404).json({ message: "Case not found" })
     const hasFiles = Object.values(req.files ?? {}).some((list) => list.length)
     await assertCategory(req.body.category)
-
-
     const { before, after, extra } = await uploadCaseImages(req.files)
     const fresh = [before, after, ...extra]
     try {

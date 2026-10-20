@@ -63,8 +63,11 @@ async function mock(fn) {
 
 /* ---------- Normalisers: the single place that adapts API responses to the UI model ---------- */
 
-const withBase = (url) => (!url || /^(https?:|data:)/i.test(url) || !config.ASSET_BASE_URL ? url : config.ASSET_BASE_URL.replace(/\/$/, "") + "/" + url.replace(/^\//, ""));
-
+const withBase = (url) =>
+  !url || !config.ASSET_BASE_URL || !url.startsWith("cases/")
+    ? url
+    : config.ASSET_BASE_URL.replace(/\/$/, "") + "/" + url;
+    
 function normalizeCase(c) {
   const category = typeof c.category === "object" && c.category ? c.category.slug : c.category;
   return {

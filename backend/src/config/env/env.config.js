@@ -15,6 +15,7 @@ export const port = process.env.PORT ?? 3000
 
 export const aws_region = required("AWS_REGION")
 export const aws_bucket = required("AWS_S3_BUCKET")
+export const asset_base_url = process.env.ASSET_BASE_URL
 
 
 if (token_secret.length < 32) throw new Error("TOKEN_SECRET must be at least 32 characters")

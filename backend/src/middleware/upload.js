@@ -29,7 +29,7 @@ async function toWebp(buffer){
             .webp({ quality: 80 })
             .toBuffer()
     } catch (error) {
-        bad("One of the files is not a valid image")
+        throw bad("One of the files is not a valid image")
     }
 }
 
