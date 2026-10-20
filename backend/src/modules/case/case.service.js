@@ -1,14 +1,9 @@
 import mongoose from "mongoose"
 import { caseModel } from "../../config/db/models/cases.model.js"
 import { categoryModel } from "../../config/db/models/categories.model.js"
-import { imageUrl, removeImages } from "../../middleware/upload.js"
 
 const bad = (message) => Object.assign(new Error(message), { status: 400})
-const pickFiles = (f = {}) => ({
-    before: f.beforeImage?.[0] && imageUrl(f.beforeImage[0]),
-    after: f.afterImage?.[0] && imageUrl(f.afterImage[0]),
-    extra: (f.additionalImages ?? []).map(imageUrl),
-})
+
 const assertCategory = async (id) => {
     if (id && !(await categoryModel.exists({ _id: id}))) throw bad("Category does not exist")
 }
@@ -73,14 +68,13 @@ export const getCaseById = async (req, res) => {
 }
 
 export const createCase = async (req,res) => {
+    if(!req.files?.beforeImage?.[0] || !req.files?.afterImage?.[0])
+            throw bad("Before and after images are required")
 
-    const { before, after, extra } = pickFiles(req.files)
+    const { before, after, extra } = req.files
     const uploaded = [before, after, ...extra]
-    
+    await assertCategory(req.body.category)
     try {
-        if(!before || !after) throw bad("Before and after images are required")
-
-        await assertCategory(req.body.category)
         const doc = await caseModel.create({
             ...req.body,
             beforeImage: before,
@@ -95,7 +89,7 @@ export const createCase = async (req,res) => {
     }
 }
 export const updateCase = async (req, res) => {
-    const { before, after, extra } = pickFiles(req.files)
+    const { before, after, extra } = await uploadCaseImages(req.files)
     const fresh = [before, after, ...extra]
     try {
         const doc = await caseModel.findById(req.params.id)
