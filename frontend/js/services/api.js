@@ -114,11 +114,12 @@ export async function getCases({ category, featured, limit, excludeId } = {}) {
   if (config.USE_MOCK) {
     list = await mock(() => casesMock);
   } else {
-    const params = new URLSearchParams();
-    if (category) params.set("category", category);
-    if (featured) params.set("featured", "true");
-    if (limit) params.set("limit", String(limit));
-    list = await request("/cases" + (params.size ? `?${params}` : ""));
+  const params = new URLSearchParams();
+  if (category) params.set("category", category);
+  if (featured) params.set("featured", "true");
+  if (limit) params.set("limit", String(limit));
+  const res = await request("/cases" + (params.size ? `?${params}` : ""));
+  list = res.data;
   }
   list = list.map(normalizeCase);
   // Filtering is repeated client-side so mock mode and real mode behave the same.

@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import { caseModel } from "../../config/db/models/cases.model.js"
 import { categoryModel } from "../../config/db/models/categories.model.js"
+import { removeImages, uploadCaseImages } from "../../middleware/upload.js"
 
 const bad = (message) => Object.assign(new Error(message), { status: 400})
 
@@ -69,11 +70,9 @@ export const getCaseById = async (req, res) => {
 
 export const createCase = async (req,res) => {
     if(!req.files?.beforeImage?.[0] || !req.files?.afterImage?.[0])
-            throw bad("Before and after images are required")
+        throw bad("Before and after images are required")
 
-    const { before, after, extra } = req.files
-    const uploaded = [before, after, ...extra]
-    await assertCategory(req.body.category)
+    const { before, after, extra } = await uploadCaseImages(req.files)
     try {
         const doc = await caseModel.create({
             ...req.body,
@@ -84,19 +83,20 @@ export const createCase = async (req,res) => {
 
         return res.status(201).json({message: "Case created", case: doc})
     } catch (error) {
-        await removeImages(uploaded)
-        return res.status(500).json({message: error.message })
+        await removeImages([before, after, ...extra])
+        throw error
     }
 }
 export const updateCase = async (req, res) => {
+    const doc = await caseModel.findById(req.params.id)
+    if(!doc) return res.status(404).json({ message: "Case not found" })
+    const hasFiles = Object.values(req.files ?? {}).some((list) => list.length)
+    await assertCategory(req.body.category)
+
+
     const { before, after, extra } = await uploadCaseImages(req.files)
     const fresh = [before, after, ...extra]
     try {
-        const doc = await caseModel.findById(req.params.id)
-        if (!doc) { await removeImages(fresh); return res.status(404).json({ message: "Case not found" }) }
-        if (!Object.keys(req.body).length && !fresh.some(Boolean)) throw bad("Nothing to update")
-        await assertCategory(req.body.category)
-
         const old = []
         if (before) { old.push(doc.beforeImage); doc.beforeImage = before }
         if (after) { old.push(doc.afterImage); doc.afterImage = after }

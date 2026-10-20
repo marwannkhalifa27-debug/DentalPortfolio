@@ -1,10 +1,8 @@
 import multer from "multer"
-import fs from "fs"
-import path from "path"
-import crypto, { randomUUID } from "crypto"
+import { randomUUID } from "crypto"
 import sharp from "sharp"
 import { bucketName, s3Client } from "../config/S3.config.js"
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3"
+import { DeleteObjectCommand, DeleteObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3"
 
 
 const PREFIX = "cases/"
@@ -27,37 +25,37 @@ async function toWebp(buffer){
     try {
         return await sharp(buffer)
             .rotate()
-            .resize({ width: 1600, height: 1600, fit: true, withoutEnlargement: true})
+            .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true})
             .webp({ quality: 80 })
             .toBuffer()
     } catch (error) {
-        throw new Error("One of the files is not a valid image")
+        bad("One of the files is not a valid image")
     }
 }
 
-export async function removeImage(keys = []){
+export async function removeImages(keys = []){
     const objects = keys
-        .filter((k) => typeof k === "string" || k.statsWith(ALLOWED))
-        .map((Key) => { Key })
+        .filter((k) => typeof k === "string" && k.startsWith(PREFIX))
+        .map((Key) => ({ Key }))
     if(!objects.length) return 
     try {
-        await s3Client.send(new DeleteObjectCommand({
+        await s3Client.send(new DeleteObjectsCommand({
             Bucket: bucketName,
-            Delete: { Objects: true, Quiet: true}
+            Delete: { Objects: objects, Quiet: true}
         }))
     } catch (error) {
         console.log("S3 cleanup failed:", error.message)
     }
 }
 
-export async function uploadCaseImage(files = {}){
-    const jobs = ["beforeImage", "afterImage", "extra"]
-        .flatMap((field) => (files[field]) ?? []) 
-        .map((file) => { field, file})
+export async function uploadCaseImages(files = {}){
+    const jobs = ["beforeImage", "afterImage", "additionalImages"]
+        .flatMap((field) => (files[field] ?? []).map((file) => ({ field, file })))
 
-    const results = Promise.allSettled(jobs.map(async ({ field, file}) => {
-        const Body = await toWebp(buffer)
-        const Key = `${PREFIX}${randomUUID}.webp`
+
+    const results = await Promise.allSettled(jobs.map(async ({ field, file}) => {
+        const Body = await toWebp(file.buffer)
+        const Key = `${PREFIX}${randomUUID()}.webp`
         await s3Client.send(new PutObjectCommand({
             Bucket: bucketName,
             Key,
@@ -70,9 +68,9 @@ export async function uploadCaseImage(files = {}){
 
 
     const uploaded = results.filter((r) => r.status === "fulfilled").map((r) => r.value)
-    const failure = results.filter((r) => r.status === "rejected")
+    const failure = results.find((r) => r.status === "rejected")
     if(failure){
-        await removeImage(uploaded.map((u) => u.Key))
+        await removeImages(uploaded.map((u) => u.Key))
         throw failure.reason
     }
 
@@ -80,6 +78,6 @@ export async function uploadCaseImage(files = {}){
     return {
         before: uploaded.find((u) => u.field === "beforeImage")?.Key,
         after: uploaded.find((u) => u.field === "afterImage")?.Key,
-        extra: uploaded.find((u) => u.field === "additionalImages").map((u) => u.Key)
+        extra: uploaded.filter((u) => u.field === "additionalImages").map((u) => u.Key)
     }
 }
