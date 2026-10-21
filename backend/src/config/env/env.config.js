@@ -18,4 +18,12 @@ export const aws_bucket = required("AWS_S3_BUCKET")
 export const asset_base_url = process.env.ASSET_BASE_URL
 
 
+export const smtp = {
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT ?? 587),
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+    to: process.env.MAIL_TO,
+}
+
 if (token_secret.length < 32) throw new Error("TOKEN_SECRET must be at least 32 characters")

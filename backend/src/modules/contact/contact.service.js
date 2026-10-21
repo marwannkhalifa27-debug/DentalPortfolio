@@ -1,8 +1,12 @@
 import { contactMessageModel } from "../../config/db/models/contactMessage.model.js"
+import { sendContactEmail } from "../../utils/email.utils.js"
 
 export const sendMessage = async (req, res) => {
     const { name, phone, email, message } = req.body
     await contactMessageModel.create({ name, phone, email: email || undefined, message })
+
+    sendContactEmail({ name, phone, email, message })
+        .catch((err) => console.log("Email failed", err.message))
     res.status(201).json({ message: "Message sent successfully" })
 }
 
@@ -47,5 +51,5 @@ export const deleteMessage = async (req,res) => {
 
     if(!deletedMessage) return res.status(404).json({ message:"Message not found!" })
 
-    return res.status(204).json({ message: "Message has been deleted", deletedMessage })
+    res.status(204).end()
 }
