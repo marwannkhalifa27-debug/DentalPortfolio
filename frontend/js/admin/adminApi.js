@@ -16,9 +16,28 @@ export async function adminFetch(path, { method = "GET", body, form } = {}) {
 export async function readError(res) {
     try {
         const data = await res.json()
-        if (Array.isArray(data.errors) && data.errors.length) return data.errors.map((e) => e.message).join(". ")
+        if (Array.isArray(data.errors) && data.errors.length)
+            return data.errors.map((e) => (e.field ? `${e.field}: ${e.message}` : e.message)).join(". ")
         return data.message || "Request failed"
     } catch {
         return res.status === 429 ? "Too many attempts. Please try again later." : "Request failed"
     }
+}
+
+// Throws an Error with a readable message when the response is not OK.
+export async function must(res) {
+    if (!res.ok) throw new Error(await readError(res))
+    return res
+}
+
+// Stored image keys ("cases/abc.webp") become full URLs; older values pass through.
+export const assetUrl = (key) =>
+    !key || !config.ASSET_BASE_URL || !key.startsWith("cases/")
+        ? key
+        : config.ASSET_BASE_URL.replace(/\/$/, "") + "/" + key
+
+export function showStatus(el, text, kind) {
+    el.hidden = !text
+    el.textContent = text
+    el.className = `form__status${kind ? ` form__status--${kind}` : ""}`
 }
