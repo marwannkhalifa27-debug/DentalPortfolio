@@ -17,7 +17,7 @@ export function dentistProfile(d) {
       <h2>Meet ${d.name}</h2>
       ${d.biography?.[0] ? html`<p style="margin-top:1rem;font-size:var(--fs-lead);line-height:1.5">${firstSentence(d.biography[0])}</p>` : ""}
       ${facts.length ? html`<dl class="facts">${facts.map(([label, value]) => html`<div><dt>${label}</dt><dd>${value}</dd></div>`)}</dl>` : ""}
-      <a class="btn outline" href="about.html">Learn more</a>
+      <a class="btn btn--outline" href="about.html">Learn more</a>
     </div>
   </div>`;
 }

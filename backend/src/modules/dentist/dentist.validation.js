@@ -34,7 +34,7 @@ export const dentistSchema = z.strictObject({
     certifications: z.array(z.strictObject({
         title: text(160).min(1),
         issuer: text(160),
-        year: z.number().int().min(1950).max(currentYear),
+        year: z.number().int().min(1950).max(currentYear).optional(),
     })).max(20),
     timeline: z.array(z.strictObject({
         period: text(60).min(1),

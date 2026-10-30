@@ -35,7 +35,7 @@ loadInto(root, {
       initBeforeAfter(qs("#case-root .ba"));
       initImageGallery(root, c.additionalImages);
       try {
-        const more = await getCases({ excludeId: c.id, limit: 3 });
+        const more = (await getCases({ excludeId: c.id, limit: 4 })).slice(0, 3);
         if (more.length) mount(qs("#more-cases"), html`<div class="container">${sectionHeader({ title: "More cases", action: html`<a class="text-link" href="cases.html">View all cases</a>` })}${caseGrid(more, names)}</div>`);
         else qs("#more-cases").hidden = true;
       } catch { qs("#more-cases").hidden = true; }

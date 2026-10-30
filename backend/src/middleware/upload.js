@@ -4,6 +4,7 @@ import sharp from "sharp"
 import { bucketName, s3Client } from "../config/S3.config.js"
 import { DeleteObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3"
 
+const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"])
 const CASE_PREFIX = "cases/"
 const PROFILE_PREFIX = "dentist/"
 const PREFIXES = [CASE_PREFIX, PROFILE_PREFIX]

@@ -31,9 +31,11 @@ if (!d) {
     </section>
     <section class="section section--white"><div class="container two-col">
       ${d.timeline.length ? html`<div>${sectionHeader({ title: "Education and experience" })}
-        <ol class="timeline">...</ol></div>` : ""}
+        <ol class="timeline">${d.timeline.map((t) => html`<li class="timeline__item">
+        <div class="timeline__period">${t.period}</div><h3 class="timeline__title">${t.title}</h3>
+        <div class="timeline__place">${t.place}</div><p class="timeline__text">${t.text}</p></li>`)}</ol></div>` : ""}
       ${d.certifications.length ? html`<div>${sectionHeader({ title: "Certifications" })}
-        <ul class="cert-list">...</ul></div>` : ""}
+        <ul class="cert-list">${d.certifications.map((c) => html`<li><strong>${c.title}</strong><span>${[c.issuer, c.year].filter(Boolean).join(", ")}</span></li>`)}</ul></div>` : ""}
     </div></section>
     <div id="contact-cta"></div>`);
   mount(qs("#contact-cta"), contactCTA(d));
