@@ -1,4 +1,5 @@
 import { dentistModel } from "../../config/db/models/dentistProfile.model.js"
+import { removeImages, uploadProfileImage } from "../../middleware/upload.js"
 
 export const getDentistProfile = async (req, res) => {
     const profile = await dentistModel.findOne({ singleton: "main" })

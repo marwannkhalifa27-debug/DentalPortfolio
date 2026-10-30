@@ -70,9 +70,6 @@ export function init() {
         e.preventDefault()
         showStatus(status, "")
 
-        // Accept a pasted <iframe ...> snippet as well as the bare URL.
-        const src = map.match(/src=["']([^"']+)["']/)
-        if (src) map = src[1]
 
         const body = {
             name: val("name"),

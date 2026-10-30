@@ -4,9 +4,9 @@ import sharp from "sharp"
 import { bucketName, s3Client } from "../config/S3.config.js"
 import { DeleteObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3"
 
-
-const PREFIX = ["cases/", "dentist/"]
-const ALLOWED = new Set([ "image/jpeg", "image/png", "image/webp"])
+const CASE_PREFIX = "cases/"
+const PROFILE_PREFIX = "dentist/"
+const PREFIXES = [CASE_PREFIX, PROFILE_PREFIX]
 
 const bad = (message) => Object.assign(new Error(message), { status: 400 })
 
@@ -35,7 +35,7 @@ async function toWebp(buffer){
 
 export async function removeImages(keys = []){
     const objects = keys
-        .filter((k) => typeof k === "string" && k.startsWith(PREFIX))
+        .filter((k) => typeof k === "string" && PREFIXES.some((p) => k.startsWith(p)))
         .map((Key) => ({ Key }))
     if(!objects.length) return 
     try {
@@ -55,7 +55,7 @@ export async function uploadCaseImages(files = {}){
 
     const results = await Promise.allSettled(jobs.map(async ({ field, file}) => {
         const Body = await toWebp(file.buffer)
-        const Key = `${PREFIX}${randomUUID()}.webp`
+        const Key = `${CASE_PREFIX}${randomUUID()}.webp`
         await s3Client.send(new PutObjectCommand({
             Bucket: bucketName,
             Key,
@@ -92,7 +92,7 @@ export const profileImageUpload = multer({
 export async function uploadProfileImage(file) {
     if (!file) return undefined
     const Body = await toWebp(file.buffer)
-    const Key = `dentist/${randomUUID()}.webp`
+    const Key = `${PROFILE_PREFIX}${randomUUID()}.webp`
     await s3Client.send(new PutObjectCommand({
         Bucket: bucketName,
         Key,

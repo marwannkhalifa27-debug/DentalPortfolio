@@ -20,9 +20,9 @@ if (!d) {
       <div class="contact-grid">
         <div>
           <ul class="contact-list">
-            ${row("phone", "Phone", html`<a href="${phoneHref(d.phone)}">${d.phone}</a>`)}
-            ${row("chat", "WhatsApp", html`<a href="${whatsappHref(d.whatsapp, "Hello, I would like to ask about a treatment.")}" target="_blank" rel="noopener noreferrer">Send a message</a>`)}
-            ${row("mail", "Email", html`<a href="mailto:${d.email}">${d.email}</a>`)}
+            ${d.phone ? row("phone", "Phone", html`<a href="${phoneHref(d.phone)}">${d.phone}</a>`) : ""}
+            ${d.whatsapp ? row("chat", "WhatsApp", html`<a href="${whatsappHref(d.whatsapp, "Hello, I would like to ask about a treatment.")}" target="_blank" rel="noopener noreferrer">Send a message</a>`) : ""}
+            ${d.email ? row("mail", "Email", html`<a href="mailto:${d.email}">${d.email}</a>`) : ""}
           </ul>
           <div class="contact-social">${socialLinks(d.socialLinks)}</div>
         </div>

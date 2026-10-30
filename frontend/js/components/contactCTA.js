@@ -10,9 +10,9 @@ export function contactCTA(d) {
         <p class="cta-band__lead">Send a photo on WhatsApp or call directly. We will suggest the next step and answer your questions.</p>
       </div>
       <div class="cta-band__panel">
-        <a class="cta-band__phone" href="${phoneHref(d.phone)}">${d.phone}</a>
+        ${d.phone ? html`<a class="cta-band__phone" href="${phoneHref(d.phone)}">${d.phone}</a>` : ""}
         <div class="cta-band__actions">
-          <a class="btn btn--light" href="${whatsappHref(d.whatsapp, "Hello, I would like to ask about a treatment.")}" target="_blank" rel="noopener noreferrer">${icon("chat", 20)}WhatsApp</a>
+          ${d.whatsapp ? html`<a class="btn btn--light" href="${whatsappHref(d.whatsapp, "Hello, I would like to ask about a treatment.")}" target="_blank" rel="noopener noreferrer">${icon("chat", 20)}WhatsApp</a>` : ""}
           <a class="btn btn--ghost-light" href="contact.html#appointment">Contact form</a>
         </div>
       </div>
