@@ -64,7 +64,7 @@ async function mock(fn) {
 /* ---------- Normalisers: the single place that adapts API responses to the UI model ---------- */
 
 const withBase = (url) =>
-  !url || !config.ASSET_BASE_URL || !url.startsWith("cases/")
+  !url || !config.ASSET_BASE_URL || !/^(cases|dentist)\//.test(url)
     ? url
     : config.ASSET_BASE_URL.replace(/\/$/, "") + "/" + url;
     
@@ -95,7 +95,6 @@ function normalizeDentist(d) {
     highlights: d.highlights ?? [],
     certifications: d.certifications ?? [],
     timeline: d.timeline ?? [],
-    workingHours: d.workingHours ?? [],
     socialLinks: d.socialLinks ?? {},
     profileImage: withBase(d.profileImage),
   };

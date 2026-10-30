@@ -8,7 +8,7 @@ import { mount, qs } from "./utils/html.js";
 import { navbar, initNavbar } from "./components/navbar.js";
 import { footer } from "./components/footer.js";
 
-const fallback = { name: config.SITE_NAME, title: "Dentist", biography: [], specialization: [], socialLinks: {}, workingHours: [] };
+const fallback = { name: config.SITE_NAME, title: "Dentist", biography: [], specialization: [], socialLinks: {} };
 
 export async function initLayout(page) {
   let dentist = null;

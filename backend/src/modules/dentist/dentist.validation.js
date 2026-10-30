@@ -6,11 +6,6 @@ const optionalUrl = z.union([z.literal(""), https])          // "" clears the fi
 const phone = z.string().trim().max(40).regex(/^[+\d][\d\s()-]{6,}$/, "Invalid phone number")
 const optionalPhone = z.union([z.literal(""), phone])
 
-// The CSP only allows frames from google.com, so only accept Google Maps embeds
-const mapEmbed = z.union([
-    z.literal(""),
-    z.string().trim().max(600).startsWith("https://www.google.com/maps/embed", "Use the Google Maps 'Embed a map' link"),
-])
 
 const currentYear = new Date().getFullYear()
 
@@ -28,8 +23,6 @@ export const dentistSchema = z.strictObject({
     phone: optionalPhone,
     whatsapp: optionalPhone,
     email: z.union([z.literal(""), z.email().toLowerCase().max(190)]),
-    address: text(255),
-    mapEmbedUrl: mapEmbed,
 
     socialLinks: z.strictObject({
         instagram: optionalUrl,
@@ -49,7 +42,6 @@ export const dentistSchema = z.strictObject({
         place: text(160),
         text: text(400),
     })).max(20),
-    workingHours: z.array(z.strictObject({ days: text(80).min(1), hours: text(80).min(1) })).max(14),
 })
 
 export const updateDentistSchema = dentistSchema.partial()

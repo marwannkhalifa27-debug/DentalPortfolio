@@ -61,7 +61,7 @@ export function initContactForm(form) {
       status.textContent = "Message sent. We will reply on the phone number you gave as soon as possible.";
     } catch {
       status.className = "form__status form__status--error";
-      status.textContent = "Your message was not sent. Try again, or contact the clinic by phone or WhatsApp.";
+      status.textContent = "Your message was not sent. Try again, or reach out directly by phone or WhatsApp.";
     } finally {
       button.disabled = false; button.textContent = "Send message";
     }

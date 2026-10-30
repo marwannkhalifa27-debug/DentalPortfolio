@@ -22,3 +22,20 @@ export const updateDentistProfile = async (req,res) => {
     await profile.save()
     res.json(profile)
 }
+export const updateDentistPhoto = async (req, res) => {
+    if (!req.file) return res.status(400).json({ message: "Photo file is required" })
+    const profile = await dentistModel.findOne({ singleton: "main" })
+    if (!profile) return res.status(404).json({ message: "Save the profile details first" })
+
+    const newKey = await uploadProfileImage(req.file)
+    try {
+        const oldKey = profile.profileImage
+        profile.profileImage = newKey
+        await profile.save()
+        if (oldKey) await removeImages([oldKey])
+        res.json({ profileImage: newKey })
+    } catch (err) {
+        await removeImages([newKey])
+        throw err
+    }
+}

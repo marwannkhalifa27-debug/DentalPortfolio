@@ -59,7 +59,7 @@ loadFeatured();
 
 /* ----- Highlights ----- */
 if (dentist?.highlights?.length) {
-  mount(qs("#highlights"), html`${sectionHeader({ title: "Why patients choose this clinic" })}
+  mount(qs("#highlights"), html`${sectionHeader({ title: "Why patients choose this Dr. Karim" })}
     <ul class="highlights">${dentist.highlights.map((h) => html`<li><h3>${h.title}</h3><p>${h.text}</p></li>`)}</ul>`);
 }
 

@@ -23,8 +23,6 @@ if (!d) {
             ${row("phone", "Phone", html`<a href="${phoneHref(d.phone)}">${d.phone}</a>`)}
             ${row("chat", "WhatsApp", html`<a href="${whatsappHref(d.whatsapp, "Hello, I would like to ask about a treatment.")}" target="_blank" rel="noopener noreferrer">Send a message</a>`)}
             ${row("mail", "Email", html`<a href="mailto:${d.email}">${d.email}</a>`)}
-            ${row("pin", "Clinic address", html`<div class="contact-list__value">${d.address}</div>`)}
-            ${row("clock", "Working hours", html`<dl class="hours">${d.workingHours.map((h) => html`<div><dt>${h.days}</dt><dd>${h.hours}</dd></div>`)}</dl>`)}
           </ul>
           <div class="contact-social">${socialLinks(d.socialLinks)}</div>
         </div>
@@ -34,12 +32,7 @@ if (!d) {
           ${contactForm()}
         </div>
       </div>
-    </section>
-    <section class="container" style="padding-bottom:var(--section-y)" aria-label="Clinic location">
-      <div class="map">${d.mapEmbedUrl
-        ? html`<iframe src="${safeUrl(d.mapEmbedUrl)}" title="Clinic location on Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`
-        : html`<div class="map__placeholder">${icon("pin", 34)}<h2 style="font-size:1.4rem">${d.address}</h2><p>Add a Google Maps embed link as <code>mapEmbedUrl</code> in the dentist data to show the map here.</p></div>`}</div>
-    </section>`);
+    `);
   initContactForm(qs("[data-contact-form]"));
   if (location.hash === "#appointment") qs("#appointment")?.scrollIntoView();
 }

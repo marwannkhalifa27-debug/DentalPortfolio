@@ -25,6 +25,8 @@ export const bootstrap = async () => {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         "frame-src": ["https://www.google.com"],
         "img-src": ["'self'", "data:", process.env.ASSET_BASE_URL].filter(Boolean),
+        "style-src": ["'self'", "'unsafe-inline'", "[https://fonts.googleapis.com](https://fonts.googleapis.com)"],
+        "font-src": ["'self'", "data:", "[https://fonts.gstatic.com](https://fonts.gstatic.com)"],
     } } }))
     app.use(express.json({ limit: "100kb"}))
     app.use(logger)

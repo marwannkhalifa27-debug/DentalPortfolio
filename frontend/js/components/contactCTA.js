@@ -7,7 +7,7 @@ export function contactCTA(d) {
     <div class="container cta-band__inner">
       <div>
         <h2 id="cta-title">Ready to talk about your smile?</h2>
-        <p class="cta-band__lead">Send a photo on WhatsApp or call the clinic. We will suggest the next step and answer your questions.</p>
+        <p class="cta-band__lead">Send a photo on WhatsApp or call directly. We will suggest the next step and answer your questions.</p>
       </div>
       <div class="cta-band__panel">
         <a class="cta-band__phone" href="${phoneHref(d.phone)}">${d.phone}</a>

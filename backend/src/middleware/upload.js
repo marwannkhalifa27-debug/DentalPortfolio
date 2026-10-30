@@ -5,7 +5,7 @@ import { bucketName, s3Client } from "../config/S3.config.js"
 import { DeleteObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3"
 
 
-const PREFIX = "cases/"
+const PREFIX = ["cases/", "dentist/"]
 const ALLOWED = new Set([ "image/jpeg", "image/png", "image/webp"])
 
 const bad = (message) => Object.assign(new Error(message), { status: 400 })
@@ -80,4 +80,25 @@ export async function uploadCaseImages(files = {}){
         after: uploaded.find((u) => u.field === "afterImage")?.Key,
         extra: uploaded.filter((u) => u.field === "additionalImages").map((u) => u.Key)
     }
+}
+
+export const profileImageUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 8 * 1024 * 1024, files: 1 },
+    fileFilter: (req, file, cb) =>
+        ALLOWED.has(file.mimetype) ? cb(null, true) : cb(bad("Only JPEG, PNG or WebP images are allowed")),
+}).single("profileImage")
+
+export async function uploadProfileImage(file) {
+    if (!file) return undefined
+    const Body = await toWebp(file.buffer)
+    const Key = `dentist/${randomUUID()}.webp`
+    await s3Client.send(new PutObjectCommand({
+        Bucket: bucketName,
+        Key,
+        Body,
+        ContentType: "image/webp",
+        CacheControl: "public, max-age=31536000, immutable",
+    }))
+    return Key
 }

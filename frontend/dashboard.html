@@ -154,6 +154,10 @@
           <div class="field"><label for="pName">Name</label><input id="pName" name="name" type="text" maxlength="120"></div>
           <div class="field"><label for="pTitle">Title</label><input id="pTitle" name="title" type="text" maxlength="200"></div>
         </div>
+        <div class="field">
+          <label for="pPhoto">Profile photo <span class="field__hint">(optional, leave empty to keep current)</span></label>
+          <input id="pPhoto" name="profileImage" type="file" accept="image/jpeg,image/png,image/webp">
+        </div>
         <div class="field"><label for="pIntro">Intro <span class="field__hint">(home page, max 400)</span></label>
           <textarea id="pIntro" name="intro" maxlength="400" style="min-height:90px"></textarea></div>
         <div class="field"><label for="pBio">Biography <span class="field__hint">(blank line = new paragraph, max 6)</span></label>
@@ -166,8 +170,8 @@
           <div class="field"><label for="pExp">Years of experience</label><input id="pExp" name="experience" type="number" min="0" max="80"></div>
           <div class="field"><label for="pInt">Professional interests</label><input id="pInt" name="interests" type="text" maxlength="255"></div>
         </div>
-        <div class="field"><label for="pSpec">Specializations <span class="field__hint">(comma separated)</span></label>
-          <input id="pSpec" name="specialization" type="text"></div>
+        <div class="field"><label for="pIntro">Intro <span class="field__hint">(home page, max 400)</span></label>
+          <textarea id="pIntro" name="intro" maxlength="400" style="min-height:90px"></textarea></div>
 
         <fieldset>
           <legend>Contact</legend>
@@ -177,9 +181,6 @@
               <div class="field"><label for="pWa">WhatsApp</label><input id="pWa" name="whatsapp" type="tel" placeholder="+20 100 000 0000"></div>
             </div>
             <div class="field"><label for="pEmail">Email</label><input id="pEmail" name="email" type="email"></div>
-            <div class="field"><label for="pAddr">Address</label><input id="pAddr" name="address" type="text" maxlength="255"></div>
-            <div class="field"><label for="pMap">Google Maps embed <span class="field__hint">(paste the iframe code or its src link)</span></label>
-              <input id="pMap" name="mapEmbedUrl" type="text"></div>
             <div class="form__row">
               <div class="field"><label for="pIg">Instagram link</label><input id="pIg" name="instagram" type="url" placeholder="https://"></div>
               <div class="field"><label for="pFb">Facebook link</label><input id="pFb" name="facebook" type="url" placeholder="https://"></div>
@@ -187,11 +188,7 @@
           </div>
         </fieldset>
 
-        <fieldset>
-          <legend>Working hours</legend>
-          <div data-repeater="workingHours"></div>
-          <button type="button" class="btn btn--outline btn--small" data-add="workingHours">Add hours</button>
-        </fieldset>
+        
         <fieldset>
           <legend>Highlights (home page)</legend>
           <div data-repeater="highlights"></div>

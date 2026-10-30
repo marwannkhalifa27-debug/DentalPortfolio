@@ -33,7 +33,7 @@ export async function sendContactEmail({ name, phone, email, message }) {
     }
 
     await transporter.sendMail({
-        from: `"Clinic website" <${smtp.user}>`,
+        from: `"Dentist website" <${smtp.user}>`,
         to: smtp.to,
         replyTo: email || undefined,
         subject: `New message from ${name.replace(/\s+/g, " ")}`,

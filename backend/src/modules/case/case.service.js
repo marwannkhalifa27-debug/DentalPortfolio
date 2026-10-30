@@ -71,17 +71,23 @@ export const getCaseById = async (req, res) => {
 export const createCase = async (req,res) => {
     if(!req.files?.beforeImage?.[0] || !req.files?.afterImage?.[0])
         throw bad("Before and after images are required")
+    await assertCategory(req.body.category)
+
+    const doc = new caseModel({
+        ...req.body,
+        beforeImage: "pending",
+        afterImage: "pending"
+    })
+    await doc.validate()
 
     const { before, after, extra } = await uploadCaseImages(req.files)
     try {
-        const doc = await caseModel.create({
-            ...req.body,
-            beforeImage: before,
-            afterImage: after,
-            additionalImages: extra
-        })
+        doc.beforeImage = before
+        doc.afterImage = after
+        doc.additionalImages = extra
+        await doc.save()
 
-        return res.status(201).json({message: "Case created", case: doc})
+        return res.status(201).json({ message: "Case created", case: doc})
     } catch (error) {
         await removeImages([before, after, ...extra])
         throw error
@@ -90,7 +96,12 @@ export const createCase = async (req,res) => {
 export const updateCase = async (req, res) => {
     const doc = await caseModel.findById(req.params.id)
     if(!doc) return res.status(404).json({ message: "Case not found" })
+    
     await assertCategory(req.body.category)
+
+    doc.set(req.body)
+    await doc.validate()
+
     const { before, after, extra } = await uploadCaseImages(req.files)
     const fresh = [before, after, ...extra]
     try {

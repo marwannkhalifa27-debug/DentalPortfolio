@@ -8,7 +8,6 @@ const repeaters = {
     highlights: { fields: [["title", "Title"], ["text", "Text"]] },
     certifications: { fields: [["title", "Title"], ["issuer", "Issuer"], ["year", "Year", "number"]] },
     timeline: { fields: [["period", "Period"], ["title", "Title"], ["place", "Place"], ["text", "Text"]] },
-    workingHours: { fields: [["days", "Days"], ["hours", "Hours"]] },
 }
 
 export function init() {
@@ -46,7 +45,7 @@ export function init() {
     form.addEventListener("click", (e) => { if (e.target.closest("[data-remove]")) e.target.closest(".repeat-row").remove() })
 
     function fill(d) {
-        for (const k of ["name", "title", "intro", "university", "interests", "phone", "whatsapp", "email", "address", "mapEmbedUrl"])
+        for (const k of ["name", "title", "intro", "university", "interests", "phone", "whatsapp", "email"])
             f[k].value = d[k] ?? ""
         f.graduationYear.value = d.graduationYear ?? ""
         f.experience.value = d.experience ?? ""
@@ -72,7 +71,6 @@ export function init() {
         showStatus(status, "")
 
         // Accept a pasted <iframe ...> snippet as well as the bare URL.
-        let map = val("mapEmbedUrl")
         const src = map.match(/src=["']([^"']+)["']/)
         if (src) map = src[1]
 
@@ -87,8 +85,6 @@ export function init() {
             phone: val("phone"),
             whatsapp: val("whatsapp"),
             email: val("email"),
-            address: val("address"),
-            mapEmbedUrl: map,
             socialLinks: { instagram: val("instagram"), facebook: val("facebook") },
         }
         if (val("graduationYear")) body.graduationYear = Number(val("graduationYear"))
@@ -99,6 +95,13 @@ export function init() {
         button.disabled = true
         try {
             await must(await adminFetch("/admin/dentist", { method: "PATCH", body }))
+
+            if (f.pPhoto?.files?.[0]) {
+                const fd = new FormData()
+                fd.set("profileImage", f.pPhoto.files[0])
+                await must(await adminFetch("/admin/dentist/photo", { method: "PATCH", form: fd }))
+                f.pPhoto.value = ""
+            }
             showStatus(status, "Profile saved.", "ok")
         } catch (err) {
             showStatus(status, err.message, "error")

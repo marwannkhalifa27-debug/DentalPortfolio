@@ -21,13 +21,11 @@ export function footer(d) {
         </ul>
       </div>
       <div>
-        <h2>Clinic</h2>
+        <h2>Contact your Dentist</h2>
         <ul class="footer-contact">
           ${d.phone ? html`<li>${icon("phone", 18)}<a href="${phoneHref(d.phone)}">${d.phone}</a></li>` : ""}
           ${d.email ? html`<li>${icon("mail", 18)}<a href="mailto:${d.email}">${d.email}</a></li>` : ""}
-          ${d.address ? html`<li>${icon("pin", 18)}<span>${d.address}</span></li>` : ""}
-          ${d.workingHours?.[0] ? html`<li>${icon("clock", 18)}<span>${d.workingHours[0].days}, ${d.workingHours[0].hours}</span></li>` : ""}
-        </ul>
+          </ul>
       </div>
     </div>
     <div class="container site-footer__base"><span>&copy; ${year} ${d.name}</span><span>Case photos are published with patient consent.</span></div>
