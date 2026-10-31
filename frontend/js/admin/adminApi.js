@@ -18,9 +18,11 @@ export async function readError(res) {
         const data = await res.json()
         if (Array.isArray(data.errors) && data.errors.length)
             return data.errors.map((e) => (e.field ? `${e.field}: ${e.message}` : e.message)).join(". ")
-        return data.message || "Request failed"
+        return data.message || `Request failed (${res.status})`
     } catch {
-        return res.status === 429 ? "Too many attempts. Please try again later." : "Request failed"
+        if (res.status === 429) return "Too many attempts. Please try again later."
+        if (res.status === 413) return "The photos are too large. Try fewer or smaller photos."
+        return `Request failed (${res.status})`
     }
 }
 
