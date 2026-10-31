@@ -3,6 +3,7 @@ import { randomUUID } from "crypto"
 import sharp from "sharp"
 import { bucketName, s3Client } from "../config/S3.config.js"
 import { DeleteObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3"
+import { aws_region } from "../config/env/env.config.js"
 
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"])
 const CASE_PREFIX = "cases/"

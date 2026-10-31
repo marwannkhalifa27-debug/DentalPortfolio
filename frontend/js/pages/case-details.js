@@ -9,7 +9,7 @@ import { errorState } from "../components/states.js";
 import { formatDate } from "../utils/format.js";
 import { sectionHeader } from "../components/sectionHeader.js";
 
-await initLayout("cases");
+const dentist = await initLayout("cases");
 
 const root = qs("#case-root");
 const id = new URLSearchParams(location.search).get("id");
@@ -30,7 +30,7 @@ loadInto(root, {
     <p style="text-align:center"><a class="text-link" href="cases.html">${icon("back", 18)}Back to cases</a></p></div>`,
   render: ({ c, cats }) => {
     const names = new Map(cats.map((x) => [x.slug, x.name]));
-    document.title = `${c.title} | Dr. Karim`;
+    document.title = `${c.title} | ${dentist?.name ?? "Dr. Karim"}`;
     queueMicrotask(async () => {
       initBeforeAfter(qs("#case-root .ba"));
       initImageGallery(root, c.additionalImages);
