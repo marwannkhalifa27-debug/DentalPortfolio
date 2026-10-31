@@ -15,10 +15,10 @@ if (!d) {
     <section class="container page-header"><h1>About ${d.name}</h1></section>
     <section class="container" style="padding-bottom:var(--section-y)">
       <div class="about-hero">
-        <div class="portrait"><img src="${d.profileImage}" alt="Portrait of ${d.name}" width="800" height="1000" decoding="async"></div>
+        <div class="portrait">${d.profileImage ? html`<img src="${d.profileImage}" alt="Portrait of ${d.name}" width="800" height="1000" decoding="async">` : ""}</div>
         <div class="about-hero__text">
           <p class="about-hero__lead">${d.biography[0]}</p>
-          ${d.biography.slice(1).map((p) => html`<p>${p}</p>`)}
+          ${d.biography[0] ? html`<p class="about-hero__lead">${d.biography[0]}</p>` : ""}
           <dl class="facts">
             ${d.experience != null ? html`<div><dt>Experience</dt><dd>${d.experience} years</dd></div>` : ""}
             ${d.university ? html`<div><dt>Education</dt><dd>${[d.university, d.graduationYear].filter(Boolean).join(", ")}</dd></div>` : ""}

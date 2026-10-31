@@ -12,6 +12,7 @@
   },
   "keywords": [],
   "author": "",
+  "engines":{ "node": ">=20.11" },
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1152.0",

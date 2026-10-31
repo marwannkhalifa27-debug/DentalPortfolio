@@ -13,18 +13,21 @@ const dentist = await initLayout("home");
 
 /* ----- Hero ----- */
 if (dentist) {
+  const edu = [dentist.university, dentist.graduationYear && `class of ${dentist.graduationYear}`].filter(Boolean).join(", ");
+  const byline = (dentist.experience != null || edu) ? html`<div class="hero__byline">
+      ${dentist.profileImage ? html`<img class="hero__avatar" src="${dentist.profileImage}" alt="" width="52" height="52">` : ""}
+      <div>${dentist.experience != null ? html`<strong>${dentist.experience} years of experience</strong>` : ""}${edu}</div>
+    </div>` : "";
+
   mount(qs("#hero-text"), html`
     <h1>${dentist.name}</h1>
     <p class="hero__title-line">${dentist.title}</p>
-    <p class="hero__intro">${dentist.intro}</p>
+    ${dentist.intro ? html`<p class="hero__intro">${dentist.intro}</p>` : ""}
     <div class="hero__actions">
       <a class="btn" href="cases.html">View my cases</a>
       <a class="btn btn--outline" href="contact.html">Contact me</a>
     </div>
-    <div class="hero__byline">
-      <img class="hero__avatar" src="${dentist.profileImage}" alt="" width="52" height="52">
-      <div><strong>${dentist.experience} years of experience</strong>${dentist.university}, class of ${dentist.graduationYear}</div>
-    </div>`);
+    ${byline}`);
 }
 
 // Hero visual: the first featured case as an interactive comparison.
