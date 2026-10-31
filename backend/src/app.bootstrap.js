@@ -24,7 +24,7 @@ export const bootstrap = async () => {
     app.use(helmet({ contentSecurityPolicy: { directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         // "frame-src": ["https://www.google.com"],
-        "upgrade-insecure-requests": null,
+        // "upgrade-insecure-requests": null,
         "img-src": ["'self'", "data:", process.env.ASSET_BASE_URL].filter(Boolean),
         "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         "font-src": ["'self'", "data:", "https://fonts.gstatic.com"],
@@ -43,7 +43,7 @@ export const bootstrap = async () => {
     app.use("/api/cases", caseRouter)
     app.use("/api", (req, res) => res.status(404).json({ message: "Not found" }))
 
-    app.use(express.static(path.join(import.meta.dirname, "../../frontend", { extensions: "html"}))) // Node 20.11+
+    app.use(express.static(path.join(import.meta.dirname, "../../frontend"), { extensions: ["html"]})) // Node 20.11+
     app.use((req, res) => res.status(404).json({ message: "Not found" }))
 
     app.use((err, req, res, next) => {
